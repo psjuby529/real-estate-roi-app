@@ -1,101 +1,118 @@
-import Image from "next/image";
+import { CaseCard } from "@/components/case-card";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/lib/button-variants";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { CaseRow } from "@/lib/types/case";
+import Link from "next/link";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+const inputClass =
+  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>;
+}) {
+  const q = typeof searchParams.q === "string" ? searchParams.q.trim() : "";
+  const type =
+    typeof searchParams.type === "string" ? searchParams.type.trim() : "";
+
+  let rows: CaseRow[] = [];
+  let errorMessage: string | null = null;
+
+  try {
+    const supabase = createSupabaseServerClient();
+    let query = supabase
+      .from("cases")
+      .select("*")
+      .order("updated_at", { ascending: false });
+
+    if (q) {
+      query = query.ilike("address", `%${q}%`);
+    }
+    if (type && type !== "all") {
+      query = query.eq("property_type", type);
+    }
+
+    const { data, error } = await query;
+    if (error) errorMessage = error.message;
+    else rows = (data as CaseRow[]) ?? [];
+  } catch (e) {
+    errorMessage = e instanceof Error ? e.message : "無法載入資料";
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold tracking-tight">案件列表</h1>
+        <p className="text-sm text-muted-foreground">
+          搜尋地址、依房產類型篩選，點卡片進入詳情與試算。
+        </p>
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <form
+        className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:flex-wrap sm:items-end"
+        method="get"
+      >
+        <div className="grid flex-1 gap-2 sm:min-w-[200px]">
+          <Label htmlFor="q">搜尋地址</Label>
+          <Input
+            id="q"
+            name="q"
+            placeholder="關鍵字…"
+            defaultValue={q}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="grid w-full gap-2 sm:w-44">
+          <Label htmlFor="type">房產類型</Label>
+          <select
+            id="type"
+            name="type"
+            defaultValue={type || "all"}
+            className={inputClass}
+          >
+            <option value="all">全部</option>
+            {["電梯", "公寓", "透天", "土地"].map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex gap-2">
+          <Button type="submit">套用</Button>
+          <Link
+            href="/"
+            className={cn(buttonVariants({ variant: "outline" }))}
+          >
+            清除
+          </Link>
+        </div>
+      </form>
+
+      {errorMessage ? (
+        <div className="rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {errorMessage}
+        </div>
+      ) : rows.length === 0 ? (
+        <div className="rounded-xl border border-dashed py-16 text-center text-muted-foreground">
+          <p className="mb-4">尚無案件，建立第一筆開始評估。</p>
+          <Link href="/new" className={cn(buttonVariants())}>
+            新增案件
+          </Link>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {rows.map((row) => (
+            <CaseCard key={row.id} row={row} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
