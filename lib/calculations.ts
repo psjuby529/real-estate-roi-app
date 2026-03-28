@@ -43,9 +43,14 @@ export type RentPhase = "interest_only" | "amortizing";
 export interface RentScenarioResult {
   phase: RentPhase;
   label: string;
-  /** 年現金流（萬） */
+  /** 年現金流（萬），公式不變 */
   yearCashFlowWan: number;
-  yearCashYield: number;
+  /** 當年償還本金（萬）；寬限期為 0 */
+  yearPrincipalRepaidWan: number;
+  /** 年總收益（萬）= 年現金流 + 當年償還本金 */
+  yearTotalReturnWan: number;
+  /** 年投報率 = 年總收益 ÷ 自備（含償還本金之經濟報酬） */
+  yearReturnYield: number;
 }
 
 function monthlyPaymentWan(
@@ -58,6 +63,31 @@ function monthlyPaymentWan(
   if (r === 0) return principalWan / months;
   const pow = Math.pow(1 + r, months);
   return (principalWan * r * pow) / (pow - 1);
+}
+
+/** 本息攤還首年度（最多 12 期）累計實付利息與本金（萬） */
+function firstYearPrincipalInterestWan(
+  loanWan: number,
+  annualRate: number,
+  monthlyPaymentWan: number,
+  amortMonths: number
+): { principalWan: number; interestWan: number } {
+  if (loanWan <= 0 || monthlyPaymentWan <= 0 || amortMonths <= 0) {
+    return { principalWan: 0, interestWan: 0 };
+  }
+  const r = annualRate / 12;
+  let balance = loanWan;
+  let totalPrincipal = 0;
+  let totalInterest = 0;
+  const n = Math.min(12, amortMonths);
+  for (let i = 0; i < n; i++) {
+    const interest = balance * r;
+    const principal = monthlyPaymentWan - interest;
+    totalInterest += interest;
+    totalPrincipal += principal;
+    balance -= principal;
+  }
+  return { principalWan: totalPrincipal, interestWan: totalInterest };
 }
 
 export function rentScenarios(
@@ -76,7 +106,10 @@ export function rentScenarios(
   const yearInterestWan = loanWan * rate;
 
   const ioCashWan = yearNetWan - yearInterestWan;
-  const ioYield = selfWan !== 0 ? ioCashWan / selfWan : 0;
+  const ioPrincipalWan = 0;
+  const ioTotalReturnWan = ioCashWan + ioPrincipalWan;
+  const ioReturnYield =
+    selfWan !== 0 ? ioTotalReturnWan / selfWan : 0;
 
   const loanYears = Math.max(0, Math.floor(num(caseRow.loan_years, 30)));
   const ioYears = Math.max(0, Math.floor(num(caseRow.interest_only_years, 0)));
@@ -84,20 +117,32 @@ export function rentScenarios(
   const pmtWan = monthlyPaymentWan(loanWan, rate, amortMonths);
   const yearDebtWan = pmtWan * 12;
   const amCashWan = yearNetWan - yearDebtWan;
-  const amYield = selfWan !== 0 ? amCashWan / selfWan : 0;
+  const { principalWan: amPrincipalWan } = firstYearPrincipalInterestWan(
+    loanWan,
+    rate,
+    pmtWan,
+    amortMonths
+  );
+  const amTotalReturnWan = amCashWan + amPrincipalWan;
+  const amReturnYield =
+    selfWan !== 0 ? amTotalReturnWan / selfWan : 0;
 
   return {
     interestOnly: {
       phase: "interest_only",
       label: "寬限期內（只還息）",
       yearCashFlowWan: ioCashWan,
-      yearCashYield: ioYield,
+      yearPrincipalRepaidWan: ioPrincipalWan,
+      yearTotalReturnWan: ioTotalReturnWan,
+      yearReturnYield: ioReturnYield,
     },
     amortizing: {
       phase: "amortizing",
       label: "開始還本後（本息攤還）",
       yearCashFlowWan: amCashWan,
-      yearCashYield: amYield,
+      yearPrincipalRepaidWan: amPrincipalWan,
+      yearTotalReturnWan: amTotalReturnWan,
+      yearReturnYield: amReturnYield,
     },
   };
 }
@@ -160,12 +205,12 @@ export function urbanRenewalEstimates(caseRow: CaseRow) {
   };
 }
 
-/** 列表卡片：保守租金 × 還本後，年現金流（萬） */
+/** 列表卡片：保守租金 × 還本後 */
 export function listCardMetrics(caseRow: CaseRow) {
   const monthly = num(caseRow.conservative_rent);
   const { amortizing } = rentScenarios(caseRow, monthly);
   return {
     yearCashFlowWan: amortizing.yearCashFlowWan,
-    yearCashYield: amortizing.yearCashYield,
+    yearReturnYield: amortizing.yearReturnYield,
   };
 }

@@ -26,10 +26,12 @@ function Metric({
   label,
   value,
   accent,
+  hint,
 }: {
   label: string;
   value: string;
   accent?: "pos" | "neg" | "neutral";
+  hint?: string;
 }) {
   const cls =
     accent === "pos"
@@ -43,6 +45,9 @@ function Metric({
       <p className={`text-xl font-bold tabular-nums sm:text-2xl ${cls}`}>
         {value}
       </p>
+      {hint ? (
+        <p className="text-[10px] leading-snug text-muted-foreground">{hint}</p>
+      ) : null}
     </div>
   );
 }
@@ -76,7 +81,7 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
                 <p className="mb-2 text-xs font-medium text-muted-foreground">
                   {conservative.interestOnly.label}
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   <Metric
                     label="年現金流（萬）"
                     value={formatWan(conservative.interestOnly.yearCashFlowWan)}
@@ -87,8 +92,26 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
                     }
                   />
                   <Metric
-                    label="年現金投報率"
-                    value={formatPct(conservative.interestOnly.yearCashYield)}
+                    label="當年償還本金（萬）"
+                    value={formatWan(
+                      conservative.interestOnly.yearPrincipalRepaidWan
+                    )}
+                  />
+                  <Metric
+                    label="年總收益（萬）"
+                    value={formatWan(
+                      conservative.interestOnly.yearTotalReturnWan
+                    )}
+                    accent={
+                      conservative.interestOnly.yearTotalReturnWan >= 0
+                        ? "pos"
+                        : "neg"
+                    }
+                  />
+                  <Metric
+                    label="年投報率"
+                    value={formatPct(conservative.interestOnly.yearReturnYield)}
+                    hint="含現金流 + 當年償還本金"
                   />
                 </div>
               </div>
@@ -96,7 +119,7 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
                 <p className="mb-2 text-xs font-medium text-muted-foreground">
                   {conservative.amortizing.label}
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   <Metric
                     label="年現金流（萬）"
                     value={formatWan(conservative.amortizing.yearCashFlowWan)}
@@ -107,8 +130,24 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
                     }
                   />
                   <Metric
-                    label="年現金投報率"
-                    value={formatPct(conservative.amortizing.yearCashYield)}
+                    label="當年償還本金（萬）"
+                    value={formatWan(
+                      conservative.amortizing.yearPrincipalRepaidWan
+                    )}
+                  />
+                  <Metric
+                    label="年總收益（萬）"
+                    value={formatWan(conservative.amortizing.yearTotalReturnWan)}
+                    accent={
+                      conservative.amortizing.yearTotalReturnWan >= 0
+                        ? "pos"
+                        : "neg"
+                    }
+                  />
+                  <Metric
+                    label="年投報率"
+                    value={formatPct(conservative.amortizing.yearReturnYield)}
+                    hint="含現金流 + 當年償還本金"
                   />
                 </div>
               </div>
@@ -124,7 +163,7 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
                 <p className="mb-2 text-xs font-medium text-muted-foreground">
                   {target.interestOnly.label}
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   <Metric
                     label="年現金流（萬）"
                     value={formatWan(target.interestOnly.yearCashFlowWan)}
@@ -133,8 +172,22 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
                     }
                   />
                   <Metric
-                    label="年現金投報率"
-                    value={formatPct(target.interestOnly.yearCashYield)}
+                    label="當年償還本金（萬）"
+                    value={formatWan(target.interestOnly.yearPrincipalRepaidWan)}
+                  />
+                  <Metric
+                    label="年總收益（萬）"
+                    value={formatWan(target.interestOnly.yearTotalReturnWan)}
+                    accent={
+                      target.interestOnly.yearTotalReturnWan >= 0
+                        ? "pos"
+                        : "neg"
+                    }
+                  />
+                  <Metric
+                    label="年投報率"
+                    value={formatPct(target.interestOnly.yearReturnYield)}
+                    hint="含現金流 + 當年償還本金"
                   />
                 </div>
               </div>
@@ -142,7 +195,7 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
                 <p className="mb-2 text-xs font-medium text-muted-foreground">
                   {target.amortizing.label}
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   <Metric
                     label="年現金流（萬）"
                     value={formatWan(target.amortizing.yearCashFlowWan)}
@@ -151,8 +204,22 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
                     }
                   />
                   <Metric
-                    label="年現金投報率"
-                    value={formatPct(target.amortizing.yearCashYield)}
+                    label="當年償還本金（萬）"
+                    value={formatWan(target.amortizing.yearPrincipalRepaidWan)}
+                  />
+                  <Metric
+                    label="年總收益（萬）"
+                    value={formatWan(target.amortizing.yearTotalReturnWan)}
+                    accent={
+                      target.amortizing.yearTotalReturnWan >= 0
+                        ? "pos"
+                        : "neg"
+                    }
+                  />
+                  <Metric
+                    label="年投報率"
+                    value={formatPct(target.amortizing.yearReturnYield)}
+                    hint="含現金流 + 當年償還本金"
                   />
                 </div>
               </div>

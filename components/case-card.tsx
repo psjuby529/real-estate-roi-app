@@ -18,7 +18,7 @@ export function CaseCard({ row }: { row: CaseRow }) {
   if (row.invest_urban_renewal) tags.push("都更");
   if (row.invest_flip) tags.push("轉賣");
 
-  const { yearCashFlowWan, yearCashYield } = listCardMetrics(row);
+  const { yearCashFlowWan, yearReturnYield } = listCardMetrics(row);
 
   return (
     <Link href={`/cases/${row.id}`} className="block transition hover:opacity-95">
@@ -73,9 +73,12 @@ export function CaseCard({ row }: { row: CaseRow }) {
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">保守年現金投報率</p>
+              <p className="text-xs text-muted-foreground">保守年投報率</p>
               <p className="text-lg font-bold tabular-nums text-primary">
-                {formatPct(yearCashYield)}
+                {formatPct(yearReturnYield)}
+              </p>
+              <p className="text-[10px] text-muted-foreground">
+                含現金流+償還本金
               </p>
             </div>
           </div>
