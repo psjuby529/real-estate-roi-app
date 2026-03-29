@@ -7,7 +7,7 @@ import type { CaseRow } from "@/lib/types/case";
  * - 年利息、年淨租金、年現金流、本息年還款：萬
  */
 
-function num(v: number | null | undefined, fallback = 0): number {
+export function num(v: number | null | undefined, fallback = 0): number {
   if (v === null || v === undefined || Number.isNaN(v)) return fallback;
   return v;
 }
@@ -72,6 +72,10 @@ export interface RentScenarioResult {
   yearTotalReturnWan: number;
   /** 年投報率 = 年總收益 ÷ 自備（含償還本金之經濟報酬） */
   yearReturnYield: number;
+  /** 年淨租金（萬）= 年毛租金 − 營運成本；供自償能力分子（與既有試算一致，不重算模型） */
+  yearNetRentWan: number;
+  /** 年債務支出（萬）：寬限期為利息；攤還期為本息合計 */
+  yearDebtServiceWan: number;
 }
 
 function monthlyPaymentWan(
@@ -156,6 +160,8 @@ export function rentScenarios(
       yearPrincipalRepaidWan: ioPrincipalWan,
       yearTotalReturnWan: ioTotalReturnWan,
       yearReturnYield: ioReturnYield,
+      yearNetRentWan: yearNetWan,
+      yearDebtServiceWan: yearInterestWan,
     },
     amortizing: {
       phase: "amortizing",
@@ -164,8 +170,36 @@ export function rentScenarios(
       yearPrincipalRepaidWan: amPrincipalWan,
       yearTotalReturnWan: amTotalReturnWan,
       yearReturnYield: amReturnYield,
+      yearNetRentWan: yearNetWan,
+      yearDebtServiceWan: yearDebtWan,
     },
   };
+}
+
+/** 總取得成本（萬）= 目標價 + 買方交易成本 + 裝修 + 前期雜費 = 自備 + 貸款 */
+export function totalAcquisitionCostWan(caseRow: CaseRow): number {
+  return selfCapital(caseRow) + loanAmount(caseRow);
+}
+
+/**
+ * 轉賣「總投入」概念：與 flipResults 相同結構，但賣方交易成本改以指定出場價（萬）計 4.5%。
+ * 供第一階段出場安全墊專用，不影響既有轉賣試算。
+ */
+export function flipTotalInWithExitPriceWan(
+  caseRow: CaseRow,
+  exitPriceWan: number
+): number {
+  const targetWan = num(caseRow.target_price);
+  const buyerCostWan = buyerTransactionCostWan(targetWan);
+  const sellerCostWan = exitPriceWan * 0.045;
+  return (
+    targetWan +
+    buyerCostWan +
+    num(caseRow.renovation_cost) +
+    num(caseRow.upfront_misc_cost) +
+    num(caseRow.holding_cost) +
+    sellerCostWan
+  );
 }
 
 export function flipResults(caseRow: CaseRow) {

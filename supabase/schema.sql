@@ -34,6 +34,8 @@ create table if not exists cases (
   nearby_new_house_price numeric,
   target_sale_price numeric,
   expected_sell_price numeric,
+  conservative_market_value numeric,
+  conservative_exit_price numeric,
   hold_months int,
   holding_cost numeric default 0,
   selling_cost numeric default 0,

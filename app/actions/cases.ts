@@ -62,6 +62,8 @@ function buildPayload(formData: FormData) {
     interior_efficiency: parseNum(formData, "interior_efficiency"),
     nearby_new_house_price: parseNum(formData, "nearby_new_house_price"),
     target_sale_price: parseNum(formData, "target_sale_price"),
+    conservative_market_value: parseNum(formData, "conservative_market_value"),
+    conservative_exit_price: parseNum(formData, "conservative_exit_price"),
     hold_months: parseIntOrNull(formData, "hold_months"),
     holding_cost: parseNum(formData, "holding_cost"),
     selling_cost: parseNum(formData, "selling_cost"),

@@ -37,6 +37,10 @@ export interface CaseRow {
   target_sale_price: number | null;
   /** @deprecated 相容舊列；試算以 target_sale_price 為主 */
   expected_sell_price: number | null;
+  /** 保守合理成交價（萬），第一階段安全墊／評級用；舊列可缺 */
+  conservative_market_value?: number | null;
+  /** 保守出場價（萬），第一階段安全墊／評級用；舊列可缺 */
+  conservative_exit_price?: number | null;
   hold_months: number | null;
   holding_cost: number | null;
   selling_cost: number | null;

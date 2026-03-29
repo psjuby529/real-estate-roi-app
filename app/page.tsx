@@ -4,6 +4,7 @@ import { buttonVariants } from "@/lib/button-variants";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { computeSabcRating } from "@/lib/sabc-rating";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { CaseRow } from "@/lib/types/case";
 import Link from "next/link";
@@ -13,6 +14,18 @@ export const dynamic = "force-dynamic";
 const inputClass =
   "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
+const GRADES = ["S", "A", "B", "C"] as const;
+
+function parseGradeFilter(
+  sp: Record<string, string | string[] | undefined>
+): Set<string> {
+  const g = sp.grade;
+  if (!g) return new Set();
+  const arr = Array.isArray(g) ? g : [g];
+  const ok = new Set(GRADES);
+  return new Set(arr.map(String).filter((x) => ok.has(x as (typeof GRADES)[number])));
+}
+
 export default async function HomePage({
   searchParams,
 }: {
@@ -21,6 +34,7 @@ export default async function HomePage({
   const q = typeof searchParams.q === "string" ? searchParams.q.trim() : "";
   const type =
     typeof searchParams.type === "string" ? searchParams.type.trim() : "";
+  const gradeFilter = parseGradeFilter(searchParams);
 
   let rows: CaseRow[] = [];
   let errorMessage: string | null = null;
@@ -45,6 +59,11 @@ export default async function HomePage({
   } catch (e) {
     errorMessage = e instanceof Error ? e.message : "無法載入資料";
   }
+
+  const displayRows =
+    gradeFilter.size === 0
+      ? rows
+      : rows.filter((row) => gradeFilter.has(computeSabcRating(row).grade));
 
   return (
     <div className="space-y-6">
@@ -84,6 +103,26 @@ export default async function HomePage({
             ))}
           </select>
         </div>
+        <div className="flex w-full flex-col gap-2 sm:flex-1 sm:min-w-[220px]">
+          <Label className="text-muted-foreground">評級（複選）</Label>
+          <div className="flex flex-wrap gap-3 rounded-md border border-input/80 bg-background px-3 py-2">
+            {GRADES.map((g) => (
+              <label
+                key={g}
+                className="flex cursor-pointer items-center gap-1.5 text-sm"
+              >
+                <input
+                  type="checkbox"
+                  name="grade"
+                  value={g}
+                  defaultChecked={gradeFilter.has(g)}
+                  className="size-4 rounded border-input"
+                />
+                {g}
+              </label>
+            ))}
+          </div>
+        </div>
         <div className="flex gap-2">
           <Button type="submit">套用</Button>
           <Link
@@ -106,9 +145,13 @@ export default async function HomePage({
             新增案件
           </Link>
         </div>
+      ) : displayRows.length === 0 ? (
+        <div className="rounded-xl border border-dashed py-12 text-center text-muted-foreground">
+          <p>沒有符合評級篩選的案件。</p>
+        </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {rows.map((row) => (
+          {displayRows.map((row) => (
             <CaseCard key={row.id} row={row} />
           ))}
         </div>

@@ -386,6 +386,39 @@ export function CaseForm({
 
       <Card>
         <CardHeader>
+          <CardTitle>第一階段決策參考</CardTitle>
+          <CardDescription>
+            用於安全墊與 SABC 評級；與目標成交價分開填寫。
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-2">
+            <Label htmlFor="conservative_market_value">保守合理成交價（萬）</Label>
+            <Input
+              id="conservative_market_value"
+              name="conservative_market_value"
+              type="number"
+              step="any"
+              defaultValue={numStr(initial?.conservative_market_value)}
+              placeholder="可選"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="conservative_exit_price">保守出場價（萬）</Label>
+            <Input
+              id="conservative_exit_price"
+              name="conservative_exit_price"
+              type="number"
+              step="any"
+              defaultValue={numStr(initial?.conservative_exit_price)}
+              placeholder="可選"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>都更估算資料</CardTitle>
           <CardDescription>容積率為百分比數值；周遭成交單價為 萬/坪</CardDescription>
         </CardHeader>

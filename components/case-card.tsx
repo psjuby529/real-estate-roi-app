@@ -9,7 +9,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { listCardMetrics } from "@/lib/calculations";
+import { isDataCompleteForSA } from "@/lib/data-completeness";
 import { formatDate, formatPct, formatWan } from "@/lib/format";
+import { computeSabcRating } from "@/lib/sabc-rating";
 import type { CaseRow } from "@/lib/types/case";
 
 export function CaseCard({ row }: { row: CaseRow }) {
@@ -19,14 +21,26 @@ export function CaseCard({ row }: { row: CaseRow }) {
   if (row.invest_flip) tags.push("轉賣");
 
   const { yearCashFlowWan, yearReturnYield } = listCardMetrics(row);
+  const rating = computeSabcRating(row);
+  const incomplete = !isDataCompleteForSA(row);
 
   return (
     <Link href={`/cases/${row.id}`} className="block transition hover:opacity-95">
-      <Card className="h-full border-border/80 shadow-sm">
+      <Card className="relative h-full border-border/80 shadow-sm">
+        {incomplete ? (
+          <span className="absolute right-2 top-2 text-[10px] leading-none text-muted-foreground">
+            資料未補齊
+          </span>
+        ) : null}
         <CardHeader className="space-y-1 pb-2">
-          <CardTitle className="line-clamp-2 text-base leading-snug">
-            {row.address}
-          </CardTitle>
+          <div className="flex flex-wrap items-start gap-2 pr-16">
+            <Badge variant="secondary" className="shrink-0 font-mono text-xs">
+              {rating.grade}
+            </Badge>
+            <CardTitle className="line-clamp-2 flex-1 text-base leading-snug">
+              {row.address}
+            </CardTitle>
+          </div>
           <CardDescription className="flex flex-wrap items-center gap-2">
             <span>{row.property_type}</span>
             <span className="text-muted-foreground">·</span>

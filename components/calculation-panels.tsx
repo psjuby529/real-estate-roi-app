@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -21,6 +23,8 @@ import {
   formatWanPerPing,
 } from "@/lib/format";
 import type { CaseRow } from "@/lib/types/case";
+
+export type CalculationSection = "rent" | "flip" | "urban" | "all";
 
 function Metric({
   label,
@@ -52,7 +56,16 @@ function Metric({
   );
 }
 
-export function CalculationPanels({ row }: { row: CaseRow }) {
+export function CalculationPanels({
+  row,
+  section = "all",
+}: {
+  row: CaseRow;
+  section?: CalculationSection;
+}) {
+  const show = (s: Exclude<CalculationSection, "all">) =>
+    section === "all" || section === s;
+
   const selfWan = selfCapital(row);
   const loanWan = loanAmount(row);
   const conservative = rentScenarios(row, row.conservative_rent ?? 0);
@@ -62,7 +75,8 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
   const landTotalWan = row.land_assessed_total;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-h-[280px] flex-col gap-4">
+      {show("rent") ? (
       <Card className="border-emerald-200/80 bg-gradient-to-br from-emerald-50/80 to-background">
         <CardHeader>
           <CardTitle className="text-lg">收租試算</CardTitle>
@@ -227,7 +241,9 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
           </div>
         </CardContent>
       </Card>
+      ) : null}
 
+      {show("flip") ? (
       <Card className="border-sky-200/80 bg-gradient-to-br from-sky-50/80 to-background">
         <CardHeader>
           <CardTitle className="text-lg">轉賣試算</CardTitle>
@@ -264,7 +280,9 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
           </div>
         </CardContent>
       </Card>
+      ) : null}
 
+      {show("urban") ? (
       <Card className="border-amber-200/80 bg-gradient-to-br from-amber-50/80 to-background">
         <CardHeader>
           <CardTitle className="text-lg">都更試算</CardTitle>
@@ -329,6 +347,7 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
           </div>
         </CardContent>
       </Card>
+      ) : null}
     </div>
   );
 }
