@@ -335,13 +335,17 @@ export function CaseForm({
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="grid gap-2">
-            <Label htmlFor="expected_sell_price">預估售價（萬）</Label>
+            <Label htmlFor="target_sale_price">目標成交價（萬）</Label>
             <Input
-              id="expected_sell_price"
-              name="expected_sell_price"
+              id="target_sale_price"
+              name="target_sale_price"
               type="number"
               step="any"
-              defaultValue={numStr(initial?.expected_sell_price)}
+              defaultValue={numStr(
+                initial?.target_sale_price ??
+                  (initial as { expected_sell_price?: number | null })
+                    ?.expected_sell_price
+              )}
               placeholder="例如 1580"
             />
           </div>

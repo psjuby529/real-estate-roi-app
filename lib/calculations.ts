@@ -17,6 +17,11 @@ export function annualGrossRentWan(monthlyRentYuan: number): number {
   return (monthlyRentYuan * 12) / 10000;
 }
 
+/** 買方固定交易成本：仲介 2% + 代書等 0.5% = 目標價 × 2.5% */
+export function buyerTransactionCostWan(targetPriceWan: number): number {
+  return targetPriceWan * 0.025;
+}
+
 /** 貸款金額（萬）= 手動或 目標價×成數 */
 export function loanAmount(caseRow: CaseRow): number {
   const manual = caseRow.loan_amount;
@@ -27,15 +32,31 @@ export function loanAmount(caseRow: CaseRow): number {
   return num(caseRow.target_price) * ratio;
 }
 
-/** 自備金額（萬） */
+/** 自備金額（萬）= 目標價 + 買方交易成本 + 裝修 + 前期雜費 − 貸款 */
 export function selfCapital(caseRow: CaseRow): number {
   const loan = loanAmount(caseRow);
+  const targetWan = num(caseRow.target_price);
+  const buyerTx = buyerTransactionCostWan(targetWan);
   return (
-    num(caseRow.target_price) +
+    targetWan +
+    buyerTx +
     num(caseRow.renovation_cost) +
     num(caseRow.upfront_misc_cost) -
     loan
   );
+}
+
+/** 轉賣目標成交價（萬）：以 target_sale_price 為主，否則沿用 expected_sell_price */
+export function flipTargetSaleWan(caseRow: CaseRow): number {
+  const t = caseRow.target_sale_price;
+  if (t !== null && t !== undefined && !Number.isNaN(Number(t))) {
+    return num(t);
+  }
+  const e = caseRow.expected_sell_price;
+  if (e !== null && e !== undefined && !Number.isNaN(Number(e))) {
+    return num(e);
+  }
+  return 0;
 }
 
 export type RentPhase = "interest_only" | "amortizing";
@@ -149,21 +170,32 @@ export function rentScenarios(
 
 export function flipResults(caseRow: CaseRow) {
   const selfWan = selfCapital(caseRow);
+  const targetWan = num(caseRow.target_price);
+  const buyerCostWan = buyerTransactionCostWan(targetWan);
+  const saleWan = flipTargetSaleWan(caseRow);
+  const sellerCostWan = saleWan * 0.045;
   const totalInWan =
-    num(caseRow.target_price) +
+    targetWan +
+    buyerCostWan +
     num(caseRow.renovation_cost) +
     num(caseRow.upfront_misc_cost) +
     num(caseRow.holding_cost) +
-    num(caseRow.selling_cost);
-  const sellWan = num(caseRow.expected_sell_price);
-  const profitWan = sellWan - totalInWan;
+    sellerCostWan;
+  const profitWan = saleWan - totalInWan;
   const totalRoi = selfWan !== 0 ? profitWan / selfWan : 0;
   const months = caseRow.hold_months;
   let annualized: number | null = null;
   if (months && months > 0 && selfWan !== 0) {
     annualized = Math.pow(1 + totalRoi, 12 / months) - 1;
   }
-  return { totalInWan, profitWan, totalRoi, annualized };
+  return {
+    buyerCostWan,
+    sellerCostWan,
+    totalInWan,
+    profitWan,
+    totalRoi,
+    annualized,
+  };
 }
 
 export function urbanRenewalEstimates(caseRow: CaseRow) {
@@ -182,7 +214,8 @@ export function urbanRenewalEstimates(caseRow: CaseRow) {
 
   let estimatedMarketValueWan: number | null = null;
   let urbanBookDiffWan: number | null = null;
-  let urbanReturnMultiple: number | null = null;
+  /** (市值÷目標價 − 1)×100，單位為百分点數字 */
+  let urbanReturnRatePercent: number | null = null;
 
   if (
     nearbyWanPerPing !== null &&
@@ -191,8 +224,10 @@ export function urbanRenewalEstimates(caseRow: CaseRow) {
   ) {
     estimatedMarketValueWan = estimatedBuildingPing * nearbyWanPerPing;
     urbanBookDiffWan = estimatedMarketValueWan - targetWan;
-    urbanReturnMultiple =
-      targetWan !== 0 ? estimatedMarketValueWan / targetWan : null;
+    urbanReturnRatePercent =
+      targetWan !== 0
+        ? (estimatedMarketValueWan / targetWan - 1) * 100
+        : null;
   }
 
   return {
@@ -201,7 +236,7 @@ export function urbanRenewalEstimates(caseRow: CaseRow) {
     estimatedInteriorPing,
     estimatedMarketValueWan,
     urbanBookDiffWan,
-    urbanReturnMultiple,
+    urbanReturnRatePercent,
   };
 }
 

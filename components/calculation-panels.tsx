@@ -14,7 +14,7 @@ import {
   urbanRenewalEstimates,
 } from "@/lib/calculations";
 import {
-  formatMultiple,
+  formatFarPercentPoints,
   formatPct,
   formatPing,
   formatWan,
@@ -231,11 +231,24 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
       <Card className="border-sky-200/80 bg-gradient-to-br from-sky-50/80 to-background">
         <CardHeader>
           <CardTitle className="text-lg">轉賣試算</CardTitle>
-          <CardDescription>金額單位：萬；自備為分母</CardDescription>
+          <CardDescription>
+            金額單位：萬；買方交易成本 = 目標價×2.5%；賣方 = 目標成交價×4.5%；自備為分母
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Metric label="總投入（萬）" value={formatWan(flip.totalInWan)} />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Metric
+              label="買方交易成本（萬）"
+              value={formatWan(flip.buyerCostWan)}
+            />
+            <Metric
+              label="賣方交易成本（萬）"
+              value={formatWan(flip.sellerCostWan)}
+            />
+            <Metric
+              label="轉賣總投入（萬）"
+              value={formatWan(flip.totalInWan)}
+            />
             <Metric
               label="預估獲利（萬）"
               value={formatWan(flip.profitWan)}
@@ -297,8 +310,10 @@ export function CalculationPanels({ row }: { row: CaseRow }) {
                 }
               />
               <Metric
-                label="都更報酬倍數"
-                value={formatMultiple(urban.urbanReturnMultiple ?? undefined)}
+                label="都更報酬率（%）"
+                value={formatFarPercentPoints(
+                  urban.urbanReturnRatePercent ?? undefined
+                )}
               />
             </div>
           </div>

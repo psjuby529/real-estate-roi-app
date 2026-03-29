@@ -32,6 +32,7 @@ create table if not exists cases (
   common_burden_rate numeric default 0.35,
   interior_efficiency numeric default 0.70,
   nearby_new_house_price numeric,
+  target_sale_price numeric,
   expected_sell_price numeric,
   hold_months int,
   holding_cost numeric default 0,

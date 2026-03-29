@@ -193,8 +193,13 @@ export default async function CaseDetailPage({
         </CardHeader>
         <CardContent className="space-y-0">
           <Row
-            label="預估售價（萬）"
-            value={formatWan(row.expected_sell_price ?? undefined)}
+            label="目標成交價（萬）"
+            value={formatWan(
+              row.target_sale_price ??
+                (row as { expected_sell_price?: number | null })
+                  .expected_sell_price ??
+                undefined
+            )}
           />
           <Row label="持有月數" value={row.hold_months} />
           <Row

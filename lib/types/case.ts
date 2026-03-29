@@ -33,6 +33,9 @@ export interface CaseRow {
   interior_efficiency: number | null;
   /** 周遭新房成交單價（萬/坪） */
   nearby_new_house_price: number | null;
+  /** 轉賣目標成交價（萬）；舊資料可僅有 expected_sell_price */
+  target_sale_price: number | null;
+  /** @deprecated 相容舊列；試算以 target_sale_price 為主 */
   expected_sell_price: number | null;
   hold_months: number | null;
   holding_cost: number | null;

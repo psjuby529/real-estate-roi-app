@@ -61,7 +61,7 @@ function buildPayload(formData: FormData) {
     common_burden_rate: parseNum(formData, "common_burden_rate"),
     interior_efficiency: parseNum(formData, "interior_efficiency"),
     nearby_new_house_price: parseNum(formData, "nearby_new_house_price"),
-    expected_sell_price: parseNum(formData, "expected_sell_price"),
+    target_sale_price: parseNum(formData, "target_sale_price"),
     hold_months: parseIntOrNull(formData, "hold_months"),
     holding_cost: parseNum(formData, "holding_cost"),
     selling_cost: parseNum(formData, "selling_cost"),
