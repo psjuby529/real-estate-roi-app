@@ -42,17 +42,20 @@ export default async function EditCasePage({
   if (!row) notFound();
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">編輯案件</h1>
-          <p className="text-sm text-muted-foreground line-clamp-2">
+    <div className="w-full min-w-0 space-y-5 sm:space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">編輯案件</h1>
+          <p className="mt-1 line-clamp-3 break-words text-xs text-muted-foreground sm:text-sm">
             {row.address}
           </p>
         </div>
         <Link
           href={`/cases/${row.id}`}
-          className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+          className={cn(
+            buttonVariants({ variant: "outline", size: "sm" }),
+            "min-h-[44px] shrink-0 touch-manipulation sm:min-h-9"
+          )}
         >
           取消
         </Link>

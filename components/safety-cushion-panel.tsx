@@ -20,15 +20,15 @@ export function SafetyCushionPanel({ row }: { row: CaseRow }) {
   const ratio = snap.selfSufficiencyRatio;
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">第一階段安全墊分析</CardTitle>
-          <CardDescription>
+    <div className="w-full min-w-0 space-y-4">
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
+          <CardTitle className="text-base sm:text-lg">第一階段安全墊分析</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             指標沿用既有試算與轉賣總投入結構；買入／出場安全墊需手填保守價格。
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 px-3 pb-4 sm:px-6 sm:pb-6">
           <section className="space-y-2">
             <h3 className="text-sm font-semibold">1. 資產自償能力（攤還期 · 保守租金）</h3>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-sm">

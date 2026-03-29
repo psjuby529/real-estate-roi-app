@@ -20,17 +20,17 @@ export function RatingPanel({ row }: { row: CaseRow }) {
   const r = computeSabcRating(row);
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">SABC 評級（第一階段）</CardTitle>
-          <CardDescription>
+    <div className="w-full min-w-0 space-y-4">
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
+          <CardTitle className="text-base sm:text-lg">SABC 評級（第一階段）</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             {!r.dataCompleteForSA
               ? "目前為階段性評估，資料未補齊時最高僅評至 B。"
               : "資料已達評定門檻，可依安全墊與現金流給予 A／S。"}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-3 pb-4 sm:px-6 sm:pb-6">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm text-muted-foreground">目前評級</span>
             <Badge variant={gradeVariant[r.grade] ?? "secondary"} className="text-base px-3 py-0.5">

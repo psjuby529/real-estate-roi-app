@@ -46,9 +46,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-Hant" className={cn("font-sans", inter.variable)}>
-      <body className="min-h-dvh antialiased">
+      <body className="min-h-dvh overflow-x-hidden antialiased">
         <SiteHeader />
-        <main className="mx-auto max-w-4xl px-4 py-6">{children}</main>
+        <main className="mx-auto w-full min-w-0 max-w-4xl py-4 pl-[max(0.75rem,env(safe-area-inset-left,0px))] pr-[max(0.75rem,env(safe-area-inset-right,0px))] sm:px-4 sm:py-6">
+          {children}
+        </main>
       </body>
     </html>
   );

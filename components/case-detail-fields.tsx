@@ -28,9 +28,13 @@ function Row({
         ? value.toLocaleString("zh-TW")
         : String(value);
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-2 border-b border-border/50 py-2 text-sm last:border-0">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium break-words">{display}</span>
+    <div className="flex flex-col gap-0.5 border-b border-border/50 py-2.5 last:border-0 sm:grid sm:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] sm:items-baseline sm:gap-x-3 sm:gap-y-0 sm:py-2">
+      <span className="shrink-0 text-xs leading-snug text-muted-foreground sm:text-sm">
+        {label}
+      </span>
+      <span className="min-w-0 break-words text-sm font-medium leading-snug text-foreground sm:text-sm">
+        {display}
+      </span>
     </div>
   );
 }
@@ -48,12 +52,12 @@ export function CaseDetailFields({ row }: { row: CaseRow }) {
   const boolLabel = (v: boolean | null | undefined) => (v ? "是" : "否");
 
   return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader>
+    <div className="w-full min-w-0 space-y-3 sm:space-y-4">
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
           <CardTitle className="text-base">基本資料</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-0">
+        <CardContent className="space-y-0 px-3 pb-3 sm:px-6 sm:pb-4">
           <Row label="地址" value={row.address} />
           <Row label="房產類型" value={row.property_type} />
           <Row label="樓層" value={row.floor_info} />
@@ -66,22 +70,22 @@ export function CaseDetailFields({ row }: { row: CaseRow }) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
           <CardTitle className="text-base">投資類型</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-0">
+        <CardContent className="space-y-0 px-3 pb-3 sm:px-6 sm:pb-4">
           <Row label="收租" value={boolLabel(row.invest_rent)} />
           <Row label="都更" value={boolLabel(row.invest_urban_renewal)} />
           <Row label="轉賣" value={boolLabel(row.invest_flip)} />
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
           <CardTitle className="text-base">貸款資料</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-0">
+        <CardContent className="space-y-0 px-3 pb-3 sm:px-6 sm:pb-4">
           <Row label="貸款成數（比例）" value={formatPct(row.loan_ratio ?? undefined)} />
           <Row
             label="貸款金額（萬）"
@@ -93,11 +97,11 @@ export function CaseDetailFields({ row }: { row: CaseRow }) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
           <CardTitle className="text-base">收租資料</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-0">
+        <CardContent className="space-y-0 px-3 pb-3 sm:px-6 sm:pb-4">
           <Row
             label="裝修投入（萬）"
             value={formatWan(row.renovation_cost ?? undefined)}
@@ -121,11 +125,11 @@ export function CaseDetailFields({ row }: { row: CaseRow }) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
           <CardTitle className="text-base">轉賣資料</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-0">
+        <CardContent className="space-y-0 px-3 pb-3 sm:px-6 sm:pb-4">
           <Row
             label="目標成交價（萬）"
             value={formatWan(
@@ -147,11 +151,11 @@ export function CaseDetailFields({ row }: { row: CaseRow }) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
           <CardTitle className="text-base">第一階段決策參考</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-0">
+        <CardContent className="space-y-0 px-3 pb-3 sm:px-6 sm:pb-4">
           <Row
             label="保守合理成交價（萬）"
             value={formatWan(row.conservative_market_value ?? undefined)}
@@ -163,11 +167,11 @@ export function CaseDetailFields({ row }: { row: CaseRow }) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
           <CardTitle className="text-base">都更估算資料</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-0">
+        <CardContent className="space-y-0 px-3 pb-3 sm:px-6 sm:pb-4">
           <Row
             label="法定容積率（%）"
             value={formatFarPercentPoints(row.legal_far ?? undefined)}
@@ -195,11 +199,11 @@ export function CaseDetailFields({ row }: { row: CaseRow }) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
+      <Card className="w-full min-w-0 overflow-hidden shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
           <CardTitle className="text-base">備註</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-3 pb-4 sm:px-6 sm:pb-6">
           <p className="whitespace-pre-wrap text-sm leading-relaxed">
             {row.notes?.trim() ? row.notes : "—"}
           </p>

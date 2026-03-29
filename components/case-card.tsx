@@ -25,19 +25,22 @@ export function CaseCard({ row }: { row: CaseRow }) {
   const incomplete = !isDataCompleteForSA(row);
 
   return (
-    <Link href={`/cases/${row.id}`} className="block transition hover:opacity-95">
-      <Card className="relative h-full border-border/80 shadow-sm">
+    <Link
+      href={`/cases/${row.id}`}
+      className="block touch-manipulation transition hover:opacity-95 active:opacity-90"
+    >
+      <Card className="relative h-full w-full min-w-0 border-border/80 shadow-sm">
         {incomplete ? (
           <span className="absolute right-2 top-2 text-[10px] leading-none text-muted-foreground">
             資料未補齊
           </span>
         ) : null}
-        <CardHeader className="space-y-1 pb-2">
-          <div className="flex flex-wrap items-start gap-2 pr-16">
+        <CardHeader className="space-y-1 px-3 pb-2 pt-3 sm:px-4 sm:pt-4">
+          <div className="flex flex-wrap items-start gap-2 pr-14 sm:pr-16">
             <Badge variant="secondary" className="shrink-0 font-mono text-xs">
               {rating.grade}
             </Badge>
-            <CardTitle className="line-clamp-2 flex-1 text-base leading-snug">
+            <CardTitle className="line-clamp-2 min-w-0 flex-1 break-words text-sm leading-snug sm:text-base">
               {row.address}
             </CardTitle>
           </div>
@@ -47,7 +50,7 @@ export function CaseCard({ row }: { row: CaseRow }) {
             <span>更新 {formatDate(row.updated_at)}</span>
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm">
+        <CardContent className="space-y-3 px-3 pb-3 text-sm sm:px-4 sm:pb-4">
           <div className="flex flex-wrap gap-1.5">
             {tags.length === 0 ? (
               <Badge variant="secondary">未標類型</Badge>

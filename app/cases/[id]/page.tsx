@@ -48,25 +48,31 @@ export default async function CaseDetailPage({
   if (!row) notFound();
 
   return (
-    <div className="space-y-6 pb-16">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-bold leading-snug">{row.address}</h1>
-          <p className="text-sm text-muted-foreground">
-            更新 {formatDate(row.updated_at)}
-          </p>
+    <div className="w-full min-w-0 space-y-4 pb-12 sm:space-y-6 sm:pb-16">
+      <section className="w-full min-w-0 border-b border-border/50 pb-3 sm:pb-4">
+        <div className="flex items-start gap-2 sm:gap-4">
+          <div className="min-w-0 flex-1 space-y-1">
+            <h1 className="break-words text-base font-bold leading-snug tracking-tight text-foreground sm:text-2xl">
+              {row.address}
+            </h1>
+            <p className="text-[11px] text-muted-foreground sm:text-sm">
+              更新 {formatDate(row.updated_at)}
+            </p>
+          </div>
+          <Link
+            href={`/cases/${row.id}/edit`}
+            className={cn(
+              buttonVariants({ variant: "secondary", size: "sm" }),
+              "touch-manipulation shrink-0 gap-1.5 whitespace-nowrap",
+              "min-h-[44px] px-3 py-2.5 text-xs sm:min-h-9 sm:py-2 sm:text-sm",
+              "active:opacity-90"
+            )}
+          >
+            <Pencil className="size-4 shrink-0" />
+            編輯
+          </Link>
         </div>
-        <Link
-          href={`/cases/${row.id}/edit`}
-          className={cn(
-            buttonVariants({ variant: "secondary" }),
-            "inline-flex shrink-0 gap-1"
-          )}
-        >
-          <Pencil className="size-4" />
-          編輯
-        </Link>
-      </div>
+      </section>
 
       <CaseDetailShell
         row={row}
@@ -75,9 +81,9 @@ export default async function CaseDetailPage({
         ratingSlot={<RatingPanel row={row} />}
       />
 
-      <Separator />
+      <Separator className="my-2" />
 
-      <div className="flex justify-center">
+      <div className="flex justify-center px-1">
         <Link href="/" className={cn(buttonVariants({ variant: "outline" }))}>
           回到列表
         </Link>

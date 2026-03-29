@@ -77,15 +77,15 @@ export function CalculationPanels({
   return (
     <div className="flex min-h-[280px] flex-col gap-4">
       {show("rent") ? (
-      <Card className="border-emerald-200/80 bg-gradient-to-br from-emerald-50/80 to-background">
-        <CardHeader>
-          <CardTitle className="text-lg">收租試算</CardTitle>
-          <CardDescription>
+      <Card className="w-full min-w-0 border-emerald-200/80 bg-gradient-to-br from-emerald-50/80 to-background shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
+          <CardTitle className="text-base sm:text-lg">收租試算</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             金額單位：萬（年毛租金由「元/月」換算）；自備 {formatWan(selfWan)} ·
             貸款 {formatWan(loanWan)}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 px-3 pb-4 sm:px-6 sm:pb-6">
           <div>
             <h4 className="mb-3 text-sm font-semibold text-emerald-900">
               保守租金（元/月）
@@ -244,14 +244,14 @@ export function CalculationPanels({
       ) : null}
 
       {show("flip") ? (
-      <Card className="border-sky-200/80 bg-gradient-to-br from-sky-50/80 to-background">
-        <CardHeader>
-          <CardTitle className="text-lg">轉賣試算</CardTitle>
-          <CardDescription>
+      <Card className="w-full min-w-0 border-sky-200/80 bg-gradient-to-br from-sky-50/80 to-background shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
+          <CardTitle className="text-base sm:text-lg">轉賣試算</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             金額單位：萬；買方交易成本 = 目標價×2.5%；賣方 = 目標成交價×4.5%；自備為分母
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-3 pb-4 sm:px-6 sm:pb-6">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Metric
               label="買方交易成本（萬）"
@@ -283,14 +283,14 @@ export function CalculationPanels({
       ) : null}
 
       {show("urban") ? (
-      <Card className="border-amber-200/80 bg-gradient-to-br from-amber-50/80 to-background">
-        <CardHeader>
-          <CardTitle className="text-lg">都更試算</CardTitle>
-          <CardDescription>
+      <Card className="w-full min-w-0 border-amber-200/80 bg-gradient-to-br from-amber-50/80 to-background shadow-sm">
+        <CardHeader className="px-3 pt-3 sm:px-6 sm:pt-6">
+          <CardTitle className="text-base sm:text-lg">都更試算</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             坪數與分回市值；土地公告現值為表單直接輸入之總價（萬）
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 px-3 pb-4 sm:px-6 sm:pb-6">
           <div>
             <p className="mb-2 text-xs font-medium text-muted-foreground">
               分回坪數
