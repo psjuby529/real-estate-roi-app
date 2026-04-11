@@ -1,4 +1,5 @@
 import { CaseCard } from "@/components/case-card";
+import { HomeCaseHistory } from "@/components/home-case-history";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/lib/button-variants";
 import { Input } from "@/components/ui/input";
@@ -161,6 +162,11 @@ export default async function HomePage({
           ))}
         </div>
       )}
+
+      <HomeCaseHistory
+        cases={displayRows}
+        loadFailed={errorMessage !== null}
+      />
     </div>
   );
 }
